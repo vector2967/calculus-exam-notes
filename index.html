@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미적분 벼락치기 노트</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false})"></script>
+<style>
+:root{
+  --bg:#fbfaf7; --panel:#ffffff; --ink:#1d1d1f; --muted:#6b6b70; --line:#e3e1db;
+  --accent:#2f6fde; --accent-soft:#2f6fde22; --acc2:#d9480f; --acc2-soft:#d9480f1f;
+  --good:#2b8a3e; --good-soft:#2b8a3e1a; --warn:#c92a2a; --warn-soft:#c92a2a14;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16171a; --panel:#1f2024; --ink:#e9e9ec; --muted:#a0a0a8; --line:#33343a;
+    --accent:#6ea0ff; --accent-soft:#6ea0ff2a; --acc2:#ff8a50; --acc2-soft:#ff8a5024;
+    --good:#69db7c; --good-soft:#69db7c1c; --warn:#ff8787; --warn-soft:#ff878718;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16171a; --panel:#1f2024; --ink:#e9e9ec; --muted:#a0a0a8; --line:#33343a;
+  --accent:#6ea0ff; --accent-soft:#6ea0ff2a; --acc2:#ff8a50; --acc2-soft:#ff8a5024;
+  --good:#69db7c; --good-soft:#69db7c1c; --warn:#ff8787; --warn-soft:#ff878718;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;word-break:keep-all}
+.wrap{display:grid;grid-template-columns:250px 1fr;max-width:1180px;margin:0 auto;gap:32px;padding:0 16px}
+nav{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:28px 0;font-size:14px}
+nav b{display:block;margin:14px 0 4px;color:var(--muted);font-size:12px;letter-spacing:.04em}
+nav a{display:block;color:var(--ink);text-decoration:none;padding:3px 8px;border-radius:6px}
+nav a:hover{background:var(--accent-soft)}
+main{min-width:0;padding:28px 0 80px}
+h1{font-size:30px;margin:0 0 6px}
+h2{font-size:24px;margin:56px 0 8px;padding-top:12px;border-top:3px solid var(--ink)}
+h3{font-size:19px;margin:36px 0 8px;scroll-margin-top:12px}
+h2,h3{scroll-margin-top:12px}
+.sub{color:var(--muted);margin:0 0 20px}
+.box{border-radius:10px;padding:12px 16px;margin:14px 0;border-left:4px solid}
+.key{background:var(--accent-soft);border-color:var(--accent)}
+.warn{background:var(--warn-soft);border-color:var(--warn)}
+.ex{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--good)}
+.box>b:first-child{display:block;margin-bottom:2px}
+.key>b:first-child{color:var(--accent)} .warn>b:first-child{color:var(--warn)} .ex>b:first-child{color:var(--good)}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--good);font-weight:600}
+figure{margin:18px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;text-align:center}
+figure svg{width:100%;max-width:440px;height:auto}
+figure.wide svg{max-width:640px}
+figcaption{font-size:14px;color:var(--muted);margin-top:6px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft)}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+ol.flow{counter-reset:s;list-style:none;padding:0}
+ol.flow li{counter-increment:s;position:relative;padding:8px 12px 8px 46px;margin:6px 0;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+ol.flow li::before{content:counter(s);position:absolute;left:12px;top:8px;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--bg);text-align:center;line-height:24px;font-weight:700;font-size:13px}
+svg text{fill:var(--ink);font-size:13px;font-family:inherit}
+svg .ax{stroke:var(--muted);stroke-width:1.2;fill:none}
+svg .c1{stroke:var(--accent);stroke-width:2.4;fill:none}
+svg .c2{stroke:var(--acc2);stroke-width:2.4;fill:none}
+svg .cg{stroke:var(--good);stroke-width:2.4;fill:none}
+svg .cw{stroke:var(--warn);stroke-width:2.4;fill:none}
+svg .ink{stroke:var(--ink);stroke-width:1.6;fill:none}
+svg .dash{stroke-dasharray:5 4}
+svg .f1{fill:var(--accent-soft)} svg .f2{fill:var(--acc2-soft)}
+svg .dot1{fill:var(--accent)} svg .dot2{fill:var(--acc2)} svg .dotk{fill:var(--ink)}
+svg .t1{fill:var(--accent)} svg .t2{fill:var(--acc2)} svg .tm{fill:var(--muted)} svg .tg{fill:var(--good)} svg .tw{fill:var(--warn)}
+svg .m1{fill:var(--accent)} svg .m2{fill:var(--acc2)} svg .mk{fill:var(--ink)} svg .mg{fill:var(--good)}
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  nav{position:static;max-height:none;border-bottom:1px solid var(--line);padding:16px 0}
+  h1{font-size:25px}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="m1"/></marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="m2"/></marker>
+    <marker id="ak" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="mg"/></marker>
+  </defs>
+</svg>
+
+<div class="wrap">
+<nav>
+  <b>시작</b>
+  <a href="#how">이 노트 쓰는 법</a>
+  <b>1. 무한급수</b>
+  <a href="#s11">1.1 수렴과 발산</a>
+  <a href="#s12">1.2 적분판정법 · p급수</a>
+  <a href="#s13">1.3 비교판정법</a>
+  <a href="#s14">1.4 교대급수 · 절대수렴</a>
+  <a href="#s15">1.5 비판정법 · 근판정법</a>
+  <a href="#s16">1.6 멱급수</a>
+  <a href="#s17">1.7 멱급수의 미분 · 적분</a>
+  <a href="#flow">★ 판정법 고르는 순서</a>
+  <b>2. 벡터와 공간기하</b>
+  <a href="#s21">2.1 벡터 기본연산</a>
+  <a href="#s22">2.2 내적</a>
+  <a href="#s23">2.3 행렬식과 외적</a>
+  <a href="#s24">2.4 직선과 평면</a>
+  <b>3. 다변수 함수</b>
+  <a href="#s31">3.1 다변수 함수</a>
+  <a href="#s32">3.2 극한과 연속</a>
+  <a href="#s33">3.3 편도함수</a>
+  <a href="#s34">3.4 연쇄법칙</a>
+  <a href="#s35">3.5 방향미분 · 그래디언트</a>
+  <a href="#s36">3.6 접평면 · 전미분</a>
+  <a href="#s37">3.7 극대 · 극소</a>
+  <b>마무리</b>
+  <a href="#tutor">튜터링 진단평가 풀이</a>
+  <a href="#cheat">시험 직전 한 장 요약</a>
+</nav>
+
+<main>
+<h1>미적분 벼락치기 노트</h1>
+<p class="sub">무한급수 · 벡터와 공간기하 · 다변수 함수와 편미분 — 처음 보는 사람 기준으로 꼭 필요한 것만.</p>
+
+<div class="box key" id="how"><b>이 노트 쓰는 법</b>
+파란 박스 = 무조건 외울 공식/개념, 빨간 박스 = 시험에서 자주 틀리는 함정, 초록 박스 = 예제(“풀이 보기”를 누르기 전에 직접 풀어보기).
+시간이 없으면 <a href="#flow">판정법 고르는 순서</a>와 <a href="#cheat">한 장 요약</a>부터 보세요.</div>
+
+<!-- ====================================================== -->
+<h2 id="p1">1. 무한급수</h2>
+
+<h3 id="s11">1.1 무한급수의 수렴과 발산</h3>
+<p>무한급수 $\sum_{k=1}^{\infty} a_k = a_1+a_2+a_3+\cdots$ 는 “무한히 더하기”입니다. 무한히 더할 수는 없으니까, <b>앞에서부터 n개까지 더한 것(부분합)</b>을 보고 n을 키워봅니다.</p>
+<div class="box key"><b>정의</b>
+부분합 $S_n = a_1+a_2+\cdots+a_n$. &nbsp; $\lim_{n\to\infty} S_n = S$ (유한한 값)이면 급수는 <b>수렴</b>하고 합은 $S$. 극한이 없거나 $\pm\infty$면 <b>발산</b>.</div>
+<figure>
+<svg viewBox="0 0 360 185">
+  <line x1="30" y1="160" x2="345" y2="160" class="ax" marker-end="url(#ak)"/>
+  <line x1="30" y1="170" x2="30" y2="10" class="ax" marker-end="url(#ak)"/>
+  <line x1="30" y1="40" x2="340" y2="40" class="c2 dash"/>
+  <text x="300" y="33" class="t2">S = 1</text>
+  <polyline points="65,100 100,70 135,55 170,47.5 205,43.8 240,41.9 275,40.9 310,40.5" class="c1" style="stroke-width:1.4"/>
+  <g class="dot1"><circle cx="65" cy="100" r="4"/><circle cx="100" cy="70" r="4"/><circle cx="135" cy="55" r="4"/><circle cx="170" cy="47.5" r="4"/><circle cx="205" cy="43.8" r="4"/><circle cx="240" cy="41.9" r="4"/><circle cx="275" cy="40.9" r="4"/><circle cx="310" cy="40.5" r="4"/></g>
+  <text x="58" y="120" class="t1">S₁</text><text x="93" y="90" class="t1">S₂</text><text x="128" y="75" class="t1">S₃</text>
+  <text x="330" y="178" class="tm">n</text>
+</svg>
+<figcaption>$\frac12+\frac14+\frac18+\cdots$ 의 부분합 $S_n$이 1에 한없이 가까워짐 → 수렴, 합 = 1</figcaption>
+</figure>
+
+<h4>꼭 알아야 하는 3가지 기본 급수</h4>
+<div class="box key"><b>① 기하급수 (등비급수)</b>
+$$\sum_{k=0}^{\infty} a r^k = a + ar + ar^2 + \cdots = \frac{a}{1-r} \quad (|r|\lt 1), \qquad |r|\ge 1 \text{ 이면 발산}$$
+<b>② 망원급수</b>: 부분분수로 쪼개면 앞뒤가 지워짐. $\frac{1}{k(k+1)} = \frac1k - \frac1{k+1}$ 이므로 $S_n = 1-\frac{1}{n+1} \to 1$.<br>
+<b>③ 조화급수</b>: $\sum \frac1k = 1+\frac12+\frac13+\cdots$ 는 <b>발산</b>. (항이 0으로 가는데도 발산하는 대표 예)</div>
+
+<div class="box key"><b>발산판정법 (n번째 항 판정법) — 제일 먼저 해볼 것</b>
+$$\lim_{k\to\infty} a_k \ne 0 \;\Longrightarrow\; \sum a_k \text{ 발산}$$</div>
+<div class="box warn"><b>함정</b>
+$\lim a_k = 0$ 이라고 해서 수렴하는 게 <b>아님</b>! (조화급수 $\sum\frac1k$: 항은 0으로 가지만 발산.) 발산판정법은 “발산”만 말해줄 수 있고 “수렴”은 절대 말해주지 않습니다.</div>
+<div class="box key"><b>성질</b>
+수렴하는 급수끼리 더하고 빼고 상수배해도 수렴: $\sum(ca_k \pm b_k) = c\sum a_k \pm \sum b_k$. 앞쪽 유한 개의 항을 바꾸거나 빼도 수렴/발산 여부는 안 바뀜(합의 값은 바뀜).</div>
+
+<div class="box ex"><b>예제</b>
+(a) $\sum_{k=1}^{\infty} \frac{3}{2^{k-1}}$ &nbsp; (b) $\sum_{k=1}^\infty \frac{k}{2k+1}$ &nbsp; (c) $\sum_{k=1}^\infty \frac{1}{k^2+3k+2}$
+<details><summary>풀이 보기</summary>
+(a) 첫항 $a=3$, 공비 $r=\frac12$인 기하급수 → $\frac{3}{1-1/2}=6$.<br>
+(b) $\lim \frac{k}{2k+1} = \frac12 \ne 0$ → 발산판정법으로 <b>발산</b>.<br>
+(c) $\frac{1}{(k+1)(k+2)} = \frac1{k+1}-\frac1{k+2}$ → 망원: $S_n = \frac12 - \frac1{n+2}\to \frac12$.
+</details></div>
+
+<h3 id="s12">1.2 적분판정법과 p급수</h3>
+<p>아이디어: 급수의 항 $a_k = f(k)$ 를 폭 1짜리 직사각형의 넓이로 보면, 급수의 합 ≈ 곡선 $y=f(x)$ 아래 넓이(이상적분). 그래서 둘은 <b>같이 수렴하거나 같이 발산</b>합니다.</p>
+<figure>
+<svg viewBox="0 0 360 190">
+  <g class="f1" style="stroke:var(--accent);stroke-width:1">
+    <rect x="40" y="30" width="50" height="140"/><rect x="90" y="100" width="50" height="70"/><rect x="140" y="123.3" width="50" height="46.7"/><rect x="190" y="135" width="50" height="35"/><rect x="240" y="142" width="50" height="28"/><rect x="290" y="146.7" width="50" height="23.3"/>
+  </g>
+  <polyline points="40,30 52,51 65,76.7 77,90 90,100 115,114 140,123.3 165,130 190,135 240,142 290,146.7 340,150" class="c2"/>
+  <line x1="30" y1="170" x2="350" y2="170" class="ax" marker-end="url(#ak)"/>
+  <line x1="40" y1="180" x2="40" y2="12" class="ax" marker-end="url(#ak)"/>
+  <text x="36" y="186">1</text><text x="86" y="186">2</text><text x="136" y="186">3</text><text x="186" y="186">4</text><text x="236" y="186">5</text>
+  <text x="56" y="62" class="t1">a₁</text><text x="106" y="118" class="t1">a₂</text><text x="156" y="140" class="t1">a₃</text>
+  <text x="250" y="105" class="t2">y = f(x)</text>
+</svg>
+<figcaption>파란 직사각형 넓이의 합 = 급수 $\sum a_k$, 주황 곡선 아래 넓이 = $\int_1^\infty f(x)\,dx$</figcaption>
+</figure>
+<div class="box key"><b>적분판정법</b>
+$f(x)$ 가 $x\ge1$ (또는 충분히 큰 $x$)에서 <b>양수 · 연속 · 감소</b>이고 $a_k=f(k)$ 이면
+$$\sum_{k=1}^\infty a_k \text{ 와 } \int_1^\infty f(x)\,dx \text{ 는 둘 다 수렴하거나 둘 다 발산.}$$
+※ 수렴하더라도 급수의 합 ≠ 적분값. “수렴 여부”만 같음.</div>
+<div class="box key"><b>p급수 — 무조건 암기</b>
+$$\sum_{k=1}^\infty \frac{1}{k^p} \;\text{ 은 }\; p\gt 1 \text{ 이면 수렴}, \quad p\le 1 \text{ 이면 발산}$$
+예: $\sum\frac1{k^2}$ 수렴, $\sum\frac1{k^{1.01}}$ 수렴, $\sum\frac1k$ 발산(p=1), $\sum\frac1{\sqrt k}$ 발산(p=1/2).<br>
+이유: $\int_1^\infty x^{-p}dx = \left[\frac{x^{1-p}}{1-p}\right]_1^\infty$ 는 $p\gt1$일 때만 유한.</div>
+<div class="box ex"><b>예제</b>
+(a) $\sum_{k=2}^\infty \frac{1}{k\ln k}$ &nbsp; (b) $\sum_{k=1}^\infty k e^{-k^2}$
+<details><summary>풀이 보기</summary>
+(a) $\int_2^\infty \frac{dx}{x\ln x}$, $u=\ln x$ 치환 → $[\ln(\ln x)]_2^\infty = \infty$ → <b>발산</b>.<br>
+(b) $\int_1^\infty xe^{-x^2}dx = \left[-\tfrac12 e^{-x^2}\right]_1^\infty = \frac{1}{2e}$ (유한) → <b>수렴</b>.
+</details></div>
+
+<h3 id="s13">1.3 비교판정법</h3>
+<p>모르는 급수를 <b>이미 아는 급수(p급수, 기하급수)</b>와 비교하는 방법. 양수항 급수에만 씁니다.</p>
+<div class="box key"><b>(직접) 비교판정법</b> — $0\le a_k\le b_k$ 일 때
+<ul style="margin:4px 0"><li>큰 쪽 $\sum b_k$ 가 수렴 ⇒ 작은 쪽 $\sum a_k$ 도 수렴</li>
+<li>작은 쪽 $\sum a_k$ 가 발산 ⇒ 큰 쪽 $\sum b_k$ 도 발산</li></ul>
+(“큰 게 유한하면 작은 것도 유한, 작은 게 무한이면 큰 것도 무한”)</div>
+<div class="box key"><b>극한비교판정법 — 실전에서 더 많이 씀</b>
+$a_k, b_k\gt0$ 이고 $\displaystyle\rho=\lim_{k\to\infty}\frac{a_k}{b_k}$ 가 <b>0도 ∞도 아닌 양수</b>이면, 두 급수는 같은 운명.<br>
+<b>요령</b>: $b_k$ 는 $a_k$ 의 <b>분자·분모에서 최고차항만 남긴 것</b>으로 고른다.</div>
+<div class="box warn"><b>함정</b>
+직접비교에서 “$a_k \le b_k$ 인데 $\sum b_k$ 발산” → 아무 결론 없음. 부등호 방향을 꼭 확인!</div>
+<div class="box ex"><b>예제</b>
+(a) $\sum \frac{1}{2^k+1}$ &nbsp; (b) $\sum \frac{3k^3-2k^2+4}{k^7-k^3+2}$ &nbsp; (c) $\sum\frac{1}{\sqrt{k}+1}$ &nbsp; (d) $\sum\frac{\ln k}{k}$
+<details><summary>풀이 보기</summary>
+(a) $\frac{1}{2^k+1}\lt\frac1{2^k}$, $\sum\frac1{2^k}$ 는 수렴하는 기하급수 → <b>수렴</b>.<br>
+(b) 최고차항만: $\frac{3k^3}{k^7}=\frac{3}{k^4}$. $b_k=\frac1{k^4}$ 로 극한비교: $\rho=3$ → p=4&gt;1 이므로 <b>수렴</b>.<br>
+(c) $b_k=\frac1{\sqrt k}$, $\rho=\lim\frac{\sqrt k}{\sqrt k+1}=1$ → p=1/2 발산이므로 <b>발산</b>.<br>
+(d) $k\ge3$에서 $\frac{\ln k}{k}\gt\frac1k$, 작은 쪽 조화급수가 발산 → <b>발산</b>.
+</details></div>
+
+<h3 id="s14">1.4 교대급수와 절대수렴</h3>
+<p>부호가 +, −, +, − 번갈아 나오는 급수: $\sum(-1)^{k+1}a_k = a_1-a_2+a_3-\cdots$ ($a_k\gt0$).</p>
+<div class="box key"><b>교대급수 판정법</b> — 두 조건만 확인
+<ol style="margin:4px 0"><li>$a_k$ 가 감소: $a_{k+1}\le a_k$</li><li>$\lim a_k = 0$</li></ol>
+⇒ 교대급수는 <b>수렴</b>. 게다가 오차: $|S-S_n|\le a_{n+1}$ (다음 항보다 작다).</div>
+<figure>
+<svg viewBox="0 0 360 185">
+  <line x1="30" y1="160" x2="345" y2="160" class="ax" marker-end="url(#ak)"/>
+  <line x1="30" y1="170" x2="30" y2="15" class="ax" marker-end="url(#ak)"/>
+  <line x1="30" y1="73" x2="340" y2="73" class="c2 dash"/>
+  <text x="285" y="66" class="t2">S = ln 2</text>
+  <polyline points="68,30 106,100 144,53.3 182,88.4 220,60.4 258,83.6 296,63.6 334,81.2" class="c1" style="stroke-width:1.4"/>
+  <g class="dot1"><circle cx="68" cy="30" r="4"/><circle cx="106" cy="100" r="4"/><circle cx="144" cy="53.3" r="4"/><circle cx="182" cy="88.4" r="4"/><circle cx="220" cy="60.4" r="4"/><circle cx="258" cy="83.6" r="4"/><circle cx="296" cy="63.6" r="4"/><circle cx="334" cy="81.2" r="4"/></g>
+  <text x="76" y="30" class="t1">S₁=1</text><text x="80" y="120" class="t1">S₂=0.5</text>
+</svg>
+<figcaption>$1-\frac12+\frac13-\frac14+\cdots$: 부분합이 위아래로 지그재그하며 폭이 줄어들어 $\ln 2$로 수렴</figcaption>
+</figure>
+<div class="box key"><b>절대수렴 / 조건수렴</b>
+<ul style="margin:4px 0">
+<li><b>절대수렴</b>: 절댓값 씌운 $\sum|a_k|$ 가 수렴. → 원래 급수도 <b>반드시 수렴</b>.</li>
+<li><b>조건수렴</b>: $\sum a_k$ 는 수렴하는데 $\sum|a_k|$ 는 발산.</li>
+<li>발산: 둘 다 아님.</li></ul>
+예: $\sum\frac{(-1)^{k+1}}{k^2}$ 절대수렴, $\sum\frac{(-1)^{k+1}}{k}$ 조건수렴(교대급수로는 수렴, 절댓값은 조화급수).</div>
+<div class="box warn"><b>“절대수렴? 조건수렴? 발산?” 묻는 문제 푸는 순서</b>
+① $\sum|a_k|$ 부터 판정 (p급수/비교/비판정법) → 수렴이면 끝: <b>절대수렴</b>.<br>
+② 발산이면 원래 급수에 교대급수 판정법 → 수렴이면 <b>조건수렴</b>, 아니면 <b>발산</b>.</div>
+<div class="box ex"><b>예제</b>
+(a) $\sum\frac{(-1)^{k+1}}{\sqrt k}$ &nbsp; (b) $\sum\frac{\sin k}{k^2}$ &nbsp; (c) $\sum(-1)^k\frac{k}{k+1}$
+<details><summary>풀이 보기</summary>
+(a) $\sum\frac1{\sqrt k}$ 발산(p=1/2). 교대급수: $\frac1{\sqrt k}$ 감소, →0 이므로 수렴 → <b>조건수렴</b>.<br>
+(b) $\left|\frac{\sin k}{k^2}\right|\le\frac1{k^2}$ → 비교로 $\sum|a_k|$ 수렴 → <b>절대수렴</b> (부호가 불규칙해도 OK).<br>
+(c) $\frac{k}{k+1}\to1\ne0$ 이므로 $(-1)^k\frac{k}{k+1}$ 은 0으로 안 감 → <b>발산</b>.
+</details></div>
+
+<h3 id="s15">1.5 비판정법과 근판정법</h3>
+<p>급수를 자기 자신과 비교하는 방법. 비교 대상을 찾을 필요가 없어서 편합니다. 결과도 바로 “절대수렴”으로 나옵니다.</p>
+<div class="box key"><b>비판정법 (Ratio test)</b> &nbsp; $\displaystyle\rho=\lim_{k\to\infty}\left|\frac{a_{k+1}}{a_k}\right|$
+<br><b>근판정법 (Root test)</b> &nbsp; $\displaystyle\rho=\lim_{k\to\infty}\sqrt[k]{|a_k|}$
+<table><tr><th>$\rho\lt1$</th><th>$\rho\gt1$ (또는 ∞)</th><th>$\rho=1$</th></tr>
+<tr><td>절대수렴</td><td>발산</td><td><b>판정 불가</b> → 다른 방법</td></tr></table>
+<b>언제 쓰나?</b> 팩토리얼 $k!$, 지수 $2^k$, $k^k$ 가 보이면 → <b>비판정법</b>. 항 전체가 $(\cdots)^k$ 꼴이면 → <b>근판정법</b>.</div>
+<div class="box key"><b>같이 외울 극한</b>
+$\frac{(k+1)!}{k!}=k+1$, &nbsp; $\lim\left(1+\frac1k\right)^k=e$, &nbsp; $\lim\sqrt[k]{k}=1$, &nbsp; $\lim\sqrt[k]{c}=1\ (c\gt0)$</div>
+<div class="box warn"><b>함정</b>
+p급수, 유리식 급수($\frac{\text{다항식}}{\text{다항식}}$)에 비판정법 쓰면 항상 $\rho=1$ 나와서 판정 불가. 그건 비교판정법으로!</div>
+<div class="box ex"><b>예제</b>
+(a) $\sum\frac{2^k}{k!}$ &nbsp; (b) $\sum\frac{k^k}{k!}$ &nbsp; (c) $\sum\left(\frac{4k-5}{2k+1}\right)^k$ &nbsp; (d) $\sum\frac{k}{3^k}$
+<details><summary>풀이 보기</summary>
+(a) $\frac{a_{k+1}}{a_k}=\frac{2^{k+1}}{(k+1)!}\cdot\frac{k!}{2^k}=\frac{2}{k+1}\to0\lt1$ → <b>수렴</b>.<br>
+(b) $\frac{(k+1)^{k+1}}{(k+1)!}\cdot\frac{k!}{k^k}=\frac{(k+1)^k}{k^k}=\left(1+\frac1k\right)^k\to e\gt1$ → <b>발산</b>.<br>
+(c) 근판정: $\sqrt[k]{a_k}=\frac{4k-5}{2k+1}\to2\gt1$ → <b>발산</b>.<br>
+(d) $\frac{k+1}{3^{k+1}}\cdot\frac{3^k}{k}=\frac{k+1}{3k}\to\frac13\lt1$ → <b>수렴</b>.
+</details></div>
+
+<h3 id="s16">1.6 멱급수</h3>
+<p>멱급수 = “무한차 다항식”: $\displaystyle\sum_{k=0}^\infty c_k(x-a)^k = c_0+c_1(x-a)+c_2(x-a)^2+\cdots$ ($a$ = 중심). $x$ 값에 따라 수렴하기도, 발산하기도 합니다.</p>
+<div class="box key"><b>핵심 정리: 수렴하는 x는 항상 “구간” 모양</b> — 셋 중 하나
+<ol style="margin:4px 0"><li>$x=a$ 에서만 수렴 ($R=0$)</li><li>모든 $x$ 에서 수렴 ($R=\infty$)</li><li>$|x-a|\lt R$ 에서 절대수렴, $|x-a|\gt R$ 에서 발산, <b>양 끝점 $x=a\pm R$ 은 따로 확인</b></li></ol>
+$R$ = 수렴반지름, 수렴하는 $x$ 전체 = 수렴구간.</div>
+<figure>
+<svg viewBox="0 0 380 110">
+  <line x1="10" y1="60" x2="370" y2="60" class="ax" marker-end="url(#ak)" marker-start="url(#ak)"/>
+  <line x1="20" y1="60" x2="95" y2="60" class="cw" style="stroke-width:5"/>
+  <line x1="285" y1="60" x2="360" y2="60" class="cw" style="stroke-width:5"/>
+  <line x1="105" y1="60" x2="275" y2="60" class="cg" style="stroke-width:5"/>
+  <circle cx="100" cy="60" r="6" style="fill:var(--bg);stroke:var(--acc2);stroke-width:2.4"/>
+  <circle cx="280" cy="60" r="6" style="fill:var(--bg);stroke:var(--acc2);stroke-width:2.4"/>
+  <circle cx="190" cy="60" r="4" class="dotk"/>
+  <text x="184" y="84">a</text><text x="78" y="84">a − R</text><text x="260" y="84">a + R</text>
+  <text x="140" y="44" class="tg">절대수렴</text><text x="35" y="44" class="tw">발산</text><text x="305" y="44" class="tw">발산</text>
+  <text x="84" y="104" class="t2">끝점: ?</text><text x="264" y="104" class="t2">끝점: ?</text>
+</svg>
+<figcaption>가운데는 수렴, 바깥은 발산, 끝점 두 개는 직접 대입해서 따로 판정</figcaption>
+</figure>
+<div class="box key"><b>수렴구간 구하는 3단계 (시험 단골)</b>
+<ol style="margin:4px 0">
+<li>비판정법: $\displaystyle\lim\left|\frac{a_{k+1}}{a_k}\right|$ 를 $x$ 포함해서 계산 → $L\cdot|x-a|$ 꼴</li>
+<li>$L|x-a|\lt1$ 풀기 → $R=\frac1L$, 열린구간 $(a-R,\,a+R)$</li>
+<li><b>끝점 $x=a-R$, $x=a+R$ 을 각각 대입</b> → p급수/교대급수 판정 → 포함 여부 결정</li></ol></div>
+<div class="box warn"><b>함정</b> 끝점 확인을 빼먹으면 답이 틀림. 끝점 대입하면 보통 p급수나 교대급수가 나옴.</div>
+<div class="box ex"><b>예제</b> 수렴반지름과 수렴구간을 구하라.<br>
+(a) $\sum_{k=1}^\infty\frac{x^k}{k}$ &nbsp; (b) $\sum_{k=0}^\infty\frac{x^k}{k!}$ &nbsp; (c) $\sum_{k=0}^\infty k!\,x^k$ &nbsp; (d) $\sum_{k=1}^\infty\frac{(x-5)^k}{k^2}$ &nbsp; (e) $\sum_{k=0}^\infty\frac{x^k}{3^k(k+1)}$
+<details><summary>풀이 보기</summary>
+(a) $\left|\frac{x^{k+1}}{k+1}\cdot\frac{k}{x^k}\right|=\frac{k}{k+1}|x|\to|x|$. $|x|\lt1$ → $R=1$.
+끝점 $x=1$: $\sum\frac1k$ 발산 ✗, $x=-1$: $\sum\frac{(-1)^k}{k}$ 교대급수 수렴 ✓ → <b>$[-1,1)$</b>.<br>
+(b) $\frac{|x|}{k+1}\to0\lt1$ (모든 x) → $R=\infty$, <b>$(-\infty,\infty)$</b>.<br>
+(c) $(k+1)|x|\to\infty$ ($x\ne0$) → $R=0$, <b>$x=0$ 에서만</b> 수렴.<br>
+(d) $\frac{k^2}{(k+1)^2}|x-5|\to|x-5|\lt1$ → $R=1$, $(4,6)$. $x=6$: $\sum\frac1{k^2}$ 수렴 ✓, $x=4$: $\sum\frac{(-1)^k}{k^2}$ 절대수렴 ✓ → <b>$[4,6]$</b>.<br>
+(e) $\frac{|x|}{3}\cdot\frac{k+1}{k+2}\to\frac{|x|}{3}\lt1$ → $R=3$. $x=3$: $\sum\frac1{k+1}$ 발산 ✗, $x=-3$: $\sum\frac{(-1)^k}{k+1}$ 수렴 ✓ → <b>$[-3,3)$</b>.
+</details></div>
+
+<h3 id="s17">1.7 멱급수의 미분과 적분</h3>
+<div class="box key"><b>항별 미분 · 적분</b> — 다항식처럼 한 항씩 미분/적분하면 됨
+$$f(x)=\sum_{k=0}^\infty c_k(x-a)^k \;\Rightarrow\; f'(x)=\sum_{k=1}^\infty k\,c_k(x-a)^{k-1},\quad \int f(x)dx=\sum_{k=0}^\infty \frac{c_k}{k+1}(x-a)^{k+1}+C$$
+<b>수렴반지름 $R$ 은 그대로</b>. 단, 끝점에서의 수렴 여부는 바뀔 수 있음 → 끝점은 다시 확인.</div>
+<div class="box key"><b>출발점 공식 (기하급수)</b> — 거의 모든 문제가 여기서 시작
+$$\frac{1}{1-x}=\sum_{k=0}^\infty x^k=1+x+x^2+x^3+\cdots\quad(|x|\lt1)$$
+<table>
+<tr><th>하는 일</th><th>결과</th></tr>
+<tr><td>$x$ 자리에 $-x$ 대입</td><td>$\frac1{1+x}=1-x+x^2-x^3+\cdots=\sum(-1)^kx^k$</td></tr>
+<tr><td>$x$ 자리에 $-x^2$ 대입</td><td>$\frac1{1+x^2}=1-x^2+x^4-\cdots=\sum(-1)^kx^{2k}$</td></tr>
+<tr><td>$\frac1{1-x}$ 미분</td><td>$\frac{1}{(1-x)^2}=1+2x+3x^2+\cdots=\sum_{k=1}^\infty kx^{k-1}$</td></tr>
+<tr><td>$\frac1{1+x}$ 적분</td><td>$\ln(1+x)=x-\frac{x^2}2+\frac{x^3}3-\cdots=\sum_{k=0}^\infty\frac{(-1)^kx^{k+1}}{k+1}$</td></tr>
+<tr><td>$\frac1{1+x^2}$ 적분</td><td>$\tan^{-1}x=x-\frac{x^3}3+\frac{x^5}5-\cdots=\sum\frac{(-1)^kx^{2k+1}}{2k+1}$</td></tr>
+</table>
+(적분하면 상수 $C$ 가 생기는데, $x=0$ 대입해서 정함. 예: $\ln(1+0)=0$ 이므로 $C=0$.)</div>
+<div class="box key"><b>같이 알아두면 좋은 맥클로린 급수</b> (모두 $R=\infty$)
+$$e^x=\sum\frac{x^k}{k!},\qquad \sin x=\sum\frac{(-1)^kx^{2k+1}}{(2k+1)!},\qquad \cos x=\sum\frac{(-1)^kx^{2k}}{(2k)!}$$
+확인: $e^x$ 를 항별 미분하면 자기 자신, $\sin x$ 를 항별 미분하면 $\cos x$.</div>
+<div class="box ex"><b>예제</b>
+(a) $\frac{x}{1-x^2}$ 의 멱급수 &nbsp; (b) $\sum_{k=1}^\infty\frac{k}{2^k}$ 의 합
+<details><summary>풀이 보기</summary>
+(a) $\frac1{1-x^2}=\sum x^{2k}$ ($x$ 자리에 $x^2$) → 곱하기 $x$: $\sum_{k=0}^\infty x^{2k+1}$, $|x|\lt1$.<br>
+(b) $\sum kx^{k-1}=\frac1{(1-x)^2}$ 의 양변에 $x$ 곱하면 $\sum kx^k=\frac{x}{(1-x)^2}$. $x=\frac12$ 대입 → $\frac{1/2}{1/4}=2$.
+</details></div>
+
+<h3 id="flow">★ 급수 판정법 고르는 순서 (이거 하나로 정리)</h3>
+<ol class="flow">
+<li><b>$\lim a_k\ne0$ ?</b> → 바로 <b>발산</b> (발산판정법). 0이면 다음으로.</li>
+<li><b>기하급수 $\sum ar^k$ / 망원급수?</b> → 공식으로 합까지 구함.</li>
+<li><b>$\frac1{k^p}$ 꼴?</b> → p급수: $p\gt1$ 수렴.</li>
+<li><b>$k!$, $a^k$, $k^k$ 이 들어있음?</b> → <b>비판정법</b>. 항 전체가 $(\cdots)^k$ → <b>근판정법</b>.</li>
+<li><b>분수식(다항식/다항식, 루트 포함)?</b> → 최고차항으로 $b_k$ 만들어 <b>극한비교판정법</b>.</li>
+<li><b>$(-1)^k$ 있음?</b> → 먼저 절댓값 급수 판정(절대수렴?), 안 되면 <b>교대급수 판정법</b>(조건수렴?).</li>
+<li><b>$\ln k$, $e^{-k^2}$ 처럼 적분이 쉬운 함수?</b> → <b>적분판정법</b>.</li>
+</ol>
+
+<!-- ====================================================== -->
+<h2 id="p2">2. 벡터와 공간기하</h2>
+
+<h3 id="s21">2.1 벡터와 기본연산</h3>
+<p>벡터 = <b>크기 + 방향</b>을 가진 화살표. 위치는 상관없고, 길이와 방향만 같으면 같은 벡터입니다.</p>
+<figure>
+<svg viewBox="0 0 330 190">
+  <polygon points="40,160 200,140 260,40 100,60" class="f1"/>
+  <line x1="40" y1="160" x2="200" y2="140" class="c1" marker-end="url(#a1)"/>
+  <line x1="40" y1="160" x2="100" y2="60" class="c2" marker-end="url(#a2)"/>
+  <line x1="200" y1="140" x2="260" y2="40" class="c2 dash"/>
+  <line x1="100" y1="60" x2="260" y2="40" class="c1 dash"/>
+  <line x1="40" y1="160" x2="260" y2="40" class="ink" marker-end="url(#ak)" style="stroke-width:2.4"/>
+  <text x="115" y="172" class="t1">u</text><text x="52" y="105" class="t2">v</text><text x="180" y="88" style="font-weight:700">u + v</text>
+</svg>
+<figcaption>평행사변형 법칙: 꼬리를 붙여 그린 u, v 의 대각선이 u + v (또는 u 끝에 v 꼬리를 이어 붙이기)</figcaption>
+</figure>
+<figure>
+<svg viewBox="0 0 360 200">
+  <line x1="150" y1="120" x2="70" y2="185" class="ax" marker-end="url(#ak)"/>
+  <line x1="150" y1="120" x2="345" y2="120" class="ax" marker-end="url(#ak)"/>
+  <line x1="150" y1="120" x2="150" y2="10" class="ax" marker-end="url(#ak)"/>
+  <text x="62" y="182">x</text><text x="338" y="112">y</text><text x="157" y="18">z</text>
+  <line x1="100" y1="160" x2="220" y2="160" class="ink dash" style="stroke-width:1"/>
+  <line x1="270" y1="120" x2="220" y2="160" class="ink dash" style="stroke-width:1"/>
+  <line x1="220" y1="160" x2="220" y2="80" class="ink dash" style="stroke-width:1"/>
+  <line x1="150" y1="120" x2="220" y2="80" class="c1" marker-end="url(#a1)"/>
+  <circle cx="220" cy="80" r="4" class="dot1"/>
+  <text x="228" y="76" class="t1">P(x₀, y₀, z₀)</text>
+  <text x="128" y="136">O</text>
+  <text x="85" y="152" class="tm">x₀</text><text x="266" y="138" class="tm">y₀</text><text x="226" y="128" class="tm">z₀</text>
+</svg>
+<figcaption>공간 좌표: 원점에서 P까지의 벡터 = $\langle x_0,y_0,z_0\rangle = x_0\mathbf i+y_0\mathbf j+z_0\mathbf k$</figcaption>
+</figure>
+<div class="box key"><b>필수 공식</b>
+<ul style="margin:4px 0">
+<li><b>성분 표현</b>: $\mathbf v=\langle v_1,v_2,v_3\rangle=v_1\mathbf i+v_2\mathbf j+v_3\mathbf k$, &nbsp; $\mathbf i=\langle1,0,0\rangle,\ \mathbf j=\langle0,1,0\rangle,\ \mathbf k=\langle0,0,1\rangle$</li>
+<li><b>시점 P → 종점 Q</b>: $\overrightarrow{PQ}=Q-P$ (<b>끝 − 시작</b>)</li>
+<li><b>덧셈 · 실수배</b>: 성분끼리. $\mathbf u+\mathbf v=\langle u_1+v_1,\dots\rangle$, $c\mathbf v=\langle cv_1,cv_2,cv_3\rangle$</li>
+<li><b>크기(노름)</b>: $\|\mathbf v\|=\sqrt{v_1^2+v_2^2+v_3^2}$</li>
+<li><b>단위벡터</b> (같은 방향, 길이 1): $\dfrac{\mathbf v}{\|\mathbf v\|}$</li>
+<li><b>두 점 거리</b>: $d=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}$</li>
+<li><b>구의 방정식</b>: 중심 $(x_0,y_0,z_0)$, 반지름 $r$: $(x-x_0)^2+(y-y_0)^2+(z-z_0)^2=r^2$ (주어진 식은 완전제곱식으로 정리)</li>
+<li><b>P→Q 의 t 지점</b> (0≤t≤1): $P+t\,(Q-P)$</li>
+<li><b>각도 θ 방향, 크기 r</b> (평면): $\langle r\cos\theta,\ r\sin\theta\rangle$</li>
+</ul></div>
+
+<h3 id="s22">2.2 벡터의 내적 (점곱)</h3>
+<div class="box key"><b>내적 정의 — 결과는 숫자(스칼라)</b>
+$$\mathbf u\cdot\mathbf v=u_1v_1+u_2v_2+u_3v_3=\|\mathbf u\|\|\mathbf v\|\cos\theta$$
+<ul style="margin:4px 0">
+<li><b>사잇각</b>: $\cos\theta=\dfrac{\mathbf u\cdot\mathbf v}{\|\mathbf u\|\|\mathbf v\|}$ &nbsp; ($0\le\theta\le\pi$)</li>
+<li><b>수직</b> ⇔ $\mathbf u\cdot\mathbf v=0$ &nbsp; (가장 많이 쓰는 성질!)</li>
+<li>부호: $\mathbf u\cdot\mathbf v\gt0$ 예각, $=0$ 직각, $\lt0$ 둔각</li>
+<li>$\mathbf v\cdot\mathbf v=\|\mathbf v\|^2$</li></ul></div>
+<figure>
+<svg viewBox="0 0 360 190">
+  <line x1="40" y1="160" x2="330" y2="160" class="c1" marker-end="url(#a1)"/>
+  <line x1="40" y1="160" x2="200" y2="45" class="ink" marker-end="url(#ak)" style="stroke-width:2.4"/>
+  <line x1="40" y1="160" x2="200" y2="160" class="c2" marker-end="url(#a2)" style="stroke-width:4"/>
+  <line x1="200" y1="160" x2="200" y2="50" class="cg dash" marker-end="url(#ag)"/>
+  <polyline points="188,160 188,148 200,148" class="ink" style="stroke-width:1"/>
+  <path d="M 85 160 A 45 45 0 0 0 76.5 134" class="ink" style="stroke-width:1.2"/>
+  <text x="90" y="148">θ</text>
+  <text x="105" y="90" style="font-weight:700">u</text>
+  <text x="318" y="180" class="t1">v</text>
+  <text x="80" y="180" class="t2">proj_v u</text>
+  <text x="208" y="110" class="tg">u − proj_v u</text>
+</svg>
+<figcaption>사영 = u 위에서 손전등을 비췄을 때 v 위에 생기는 그림자. 그림자(주황) + 수직성분(초록) = u</figcaption>
+</figure>
+<div class="box key"><b>사영 (정사영) — 튜터링에도 나온 유형</b>
+$$\text{proj}_{\mathbf v}\mathbf u=\frac{\mathbf u\cdot\mathbf v}{\|\mathbf v\|^2}\,\mathbf v \qquad(\text{v 방향 성분 벡터})$$
+$$\mathbf u-\text{proj}_{\mathbf v}\mathbf u \qquad(\text{v 에 수직인 성분 벡터})$$
+스칼라 성분(그림자 길이): $\dfrac{\mathbf u\cdot\mathbf v}{\|\mathbf v\|}$. &nbsp; 일(work): $W=\mathbf F\cdot\overrightarrow{PQ}$.</div>
+<div class="box warn"><b>함정</b> 사영 공식 분모는 $\|\mathbf v\|^2$ (제곱!). 루트 안 씌움: $\|\mathbf v\|^2=v_1^2+v_2^2+v_3^2$.</div>
+
+<h3 id="s23">2.3 행렬식과 외적 (가위곱)</h3>
+<div class="box key"><b>행렬식</b>
+$$\begin{vmatrix}a&b\\c&d\end{vmatrix}=ad-bc,\qquad
+\begin{vmatrix}a_1&a_2&a_3\\b_1&b_2&b_3\\c_1&c_2&c_3\end{vmatrix}=a_1\begin{vmatrix}b_2&b_3\\c_2&c_3\end{vmatrix}-a_2\begin{vmatrix}b_1&b_3\\c_1&c_3\end{vmatrix}+a_3\begin{vmatrix}b_1&b_2\\c_1&c_2\end{vmatrix}$$
+가운데 항은 <b>마이너스</b>(+ − + 부호).</div>
+<div class="box key"><b>외적 — 결과는 벡터 (3차원에서만)</b>
+$$\mathbf u\times\mathbf v=\begin{vmatrix}\mathbf i&\mathbf j&\mathbf k\\u_1&u_2&u_3\\v_1&v_2&v_3\end{vmatrix}
+=\langle u_2v_3-u_3v_2,\; -(u_1v_3-u_3v_1),\; u_1v_2-u_2v_1\rangle$$
+<ul style="margin:4px 0">
+<li>$\mathbf u\times\mathbf v$ 는 <b>u 와 v 둘 다에 수직</b> (오른손 법칙 방향)</li>
+<li>$\|\mathbf u\times\mathbf v\|=\|\mathbf u\|\|\mathbf v\|\sin\theta$ = u, v 로 만든 <b>평행사변형 넓이</b> (삼각형은 ÷2)</li>
+<li>$\mathbf v\times\mathbf u=-(\mathbf u\times\mathbf v)$ (순서 바꾸면 부호 반대), $\mathbf u\times\mathbf u=\mathbf 0$, 평행하면 $\mathbf 0$</li>
+<li>$\mathbf i\times\mathbf j=\mathbf k,\ \mathbf j\times\mathbf k=\mathbf i,\ \mathbf k\times\mathbf i=\mathbf j$ (i→j→k 순환 순서면 +)</li></ul></div>
+<figure>
+<svg viewBox="0 0 360 200">
+  <polygon points="120,160 260,180 320,140 180,120" class="f1"/>
+  <line x1="120" y1="160" x2="260" y2="180" class="c1" marker-end="url(#a1)"/>
+  <line x1="120" y1="160" x2="180" y2="120" class="c2" marker-end="url(#a2)"/>
+  <line x1="120" y1="160" x2="120" y2="25" class="ink" marker-end="url(#ak)" style="stroke-width:2.6"/>
+  <polyline points="120,148 128,143 128,155" class="ink" style="stroke-width:1"/>
+  <text x="190" y="196" class="t1">u</text><text x="135" y="125" class="t2">v</text>
+  <text x="128" y="38" style="font-weight:700">u × v</text>
+  <text x="200" y="158" class="t1">넓이 = ‖u × v‖</text>
+</svg>
+<figcaption>u × v 는 u, v 가 만드는 면에 수직, 길이 = 평행사변형 넓이</figcaption>
+</figure>
+<div class="box key"><b>스칼라 삼중적</b>
+$$\mathbf u\cdot(\mathbf v\times\mathbf w)=\begin{vmatrix}u_1&u_2&u_3\\v_1&v_2&v_3\\w_1&w_2&w_3\end{vmatrix}$$
+절댓값 = u, v, w 로 만든 <b>평행육면체 부피</b>. &nbsp; $=0$ 이면 세 벡터가 <b>한 평면 위</b>(공면).</div>
+<div class="box ex"><b>예제</b> $\mathbf u=\langle1,2,-2\rangle$, $\mathbf v=\langle3,0,1\rangle$ 일 때 $\mathbf u\times\mathbf v$ 와 평행사변형 넓이
+<details><summary>풀이 보기</summary>
+$\mathbf i(2\cdot1-(-2)\cdot0)-\mathbf j(1\cdot1-(-2)\cdot3)+\mathbf k(1\cdot0-2\cdot3)=\langle2,-7,-6\rangle$.<br>
+검산: $\langle2,-7,-6\rangle\cdot\mathbf u=2-14+12=0$ ✓, $\cdot\mathbf v=6+0-6=0$ ✓ (둘 다 수직이어야 함 — 시험장에서 꼭 검산!)<br>
+넓이 $=\sqrt{4+49+36}=\sqrt{89}$.
+</details></div>
+
+<h3 id="s24">2.4 직선과 평면</h3>
+<figure class="wide">
+<svg viewBox="0 0 620 200">
+  <line x1="20" y1="170" x2="290" y2="30" class="ink" style="stroke-width:1.6"/>
+  <circle cx="98" cy="129.6" r="5" class="dot2"/>
+  <line x1="98" y1="129.6" x2="160" y2="97.4" class="c1" marker-end="url(#a1)" style="stroke-width:3"/>
+  <circle cx="160" cy="97.4" r="3" class="dotk"/><circle cx="222" cy="65.3" r="3" class="dotk"/><circle cx="36" cy="161.7" r="3" class="dotk"/>
+  <text x="72" y="155" class="t2">P₀ (t=0)</text><text x="128" y="88" class="t1">v</text>
+  <text x="166" y="112">t=1</text><text x="228" y="80">t=2</text><text x="20" y="190">t=−1</text>
+  <text x="40" y="22" style="font-weight:700">직선: r = r₀ + t v</text>
+  <polygon points="350,150 520,175 600,115 430,90" class="f1" style="stroke:var(--accent);stroke-width:1"/>
+  <circle cx="470" cy="130" r="5" class="dot2"/>
+  <line x1="470" y1="130" x2="470" y2="30" class="ink" marker-end="url(#ak)" style="stroke-width:2.6"/>
+  <line x1="470" y1="130" x2="555" y2="140" class="c2 dash" marker-end="url(#a2)"/>
+  <polyline points="470,118 480,119 480,131" class="ink" style="stroke-width:1"/>
+  <text x="478" y="40" style="font-weight:700">n = ⟨a, b, c⟩</text>
+  <text x="440" y="150" class="t2">P₀</text><text x="530" y="160" class="t2">P</text>
+  <text x="350" y="22" style="font-weight:700">평면: n · (P − P₀) = 0</text>
+</svg>
+<figcaption>왼쪽: 직선은 “한 점 + 방향벡터”. 오른쪽: 평면은 “한 점 + 법선벡터(평면에 수직)”</figcaption>
+</figure>
+<div class="box key"><b>직선</b> — 점 $P_0(x_0,y_0,z_0)$ 지나고 방향 $\mathbf v=\langle a,b,c\rangle$
+$$x=x_0+at,\quad y=y_0+bt,\quad z=z_0+ct\qquad(\text{매개변수 방정식})$$
+대칭방정식: $\dfrac{x-x_0}{a}=\dfrac{y-y_0}{b}=\dfrac{z-z_0}{c}$. &nbsp; 두 점 P, Q 지나는 직선 → 방향 $\mathbf v=Q-P$.<br>
+두 직선: 방향벡터가 평행 → 평행 / 안 평행 + 만남 → 교차 / 안 평행 + 안 만남 → <b>꼬인 위치</b>.</div>
+<div class="box key"><b>평면</b> — 점 $P_0$ 지나고 법선 $\mathbf n=\langle a,b,c\rangle$
+$$a(x-x_0)+b(y-y_0)+c(z-z_0)=0 \;\;\Longleftrightarrow\;\; ax+by+cz=d$$
+<b>평면 식 $ax+by+cz=d$ 의 계수 $\langle a,b,c\rangle$ = 법선벡터</b> (바로 읽힘!)
+<ul style="margin:4px 0">
+<li><b>세 점 P, Q, R 지나는 평면</b>: $\mathbf n=\overrightarrow{PQ}\times\overrightarrow{PR}$</li>
+<li><b>두 평면 사잇각</b> = 법선벡터 사잇각. 평행 ⇔ 법선 평행, 수직 ⇔ $\mathbf n_1\cdot\mathbf n_2=0$</li>
+<li><b>두 평면의 교선</b>: 방향 $=\mathbf n_1\times\mathbf n_2$, 점은 $z=0$ 등 하나 정해서 찾기</li>
+<li><b>직선과 평면의 교점</b>: 직선의 $x(t),y(t),z(t)$ 를 평면 식에 대입 → t 구하기</li>
+<li><b>점과 평면 거리</b>: $D=\dfrac{|ax_0+by_0+cz_0-d|}{\sqrt{a^2+b^2+c^2}}$</li></ul></div>
+<div class="box ex"><b>예제</b>
+(a) 두 점 $(1,2,3)$, $(4,0,5)$ 를 지나는 직선 &nbsp; (b) 세 점 $P(1,2,-1),Q(2,3,1),R(3,-1,2)$ 를 지나는 평면 &nbsp; (c) 점 $(1,-4,-3)$ 에서 평면 $2x-3y+6z=-1$ 까지 거리 &nbsp; (d) 평면 $x+y+z=1$, $x-y+2z=0$ 의 교선
+<details><summary>풀이 보기</summary>
+(a) $\mathbf v=\langle3,-2,2\rangle$ → $x=1+3t,\ y=2-2t,\ z=3+2t$.<br>
+(b) $\overrightarrow{PQ}=\langle1,1,2\rangle$, $\overrightarrow{PR}=\langle2,-3,3\rangle$, 외적 $=\langle9,1,-5\rangle$. → $9(x-1)+(y-2)-5(z+1)=0$, 즉 $9x+y-5z=16$. (Q, R 대입해서 16 나오는지 검산)<br>
+(c) $\dfrac{|2(1)-3(-4)+6(-3)+1|}{\sqrt{4+9+36}}=\dfrac{|-3|}{7}=\dfrac37$.<br>
+(d) 방향 $\langle1,1,1\rangle\times\langle1,-1,2\rangle=\langle3,-1,-2\rangle$. $z=0$ 놓으면 $x+y=1,\ x-y=0$ → $(\frac12,\frac12,0)$. → $x=\frac12+3t,\ y=\frac12-t,\ z=-2t$.
+</details></div>
+
+<!-- ====================================================== -->
+<h2 id="p3">3. 다변수 함수와 편미분</h2>
+
+<h3 id="s31">3.1 다변수 함수</h3>
+<p>$z=f(x,y)$: 입력이 두 개 $(x,y)$, 출력 하나. 그래프는 3차원 <b>곡면</b>. 곡면을 높이 $z=k$ 로 잘라 위에서 내려다본 곡선 $f(x,y)=k$ 가 <b>등위곡선(등고선)</b>입니다.</p>
+<figure class="wide">
+<svg viewBox="0 0 560 210">
+  <line x1="170" y1="190" x2="170" y2="10" class="ax" marker-end="url(#ak)"/>
+  <text x="176" y="20">z</text>
+  <path d="M 80 40 Q 170 240 260 40" class="c1"/>
+  <ellipse cx="170" cy="40" rx="90" ry="13" class="c1" style="stroke-width:1.6"/>
+  <ellipse cx="170" cy="96" rx="64" ry="9" class="c2 dash" style="stroke-width:1.6"/>
+  <ellipse cx="170" cy="118" rx="45" ry="7" class="c2 dash" style="stroke-width:1.6"/>
+  <text x="240" y="100" class="t2">z = k 로 자른 단면</text>
+  <text x="70" y="200">z = x² + y² (포물면)</text>
+  <line x1="300" y1="165" x2="345" y2="165" class="ink" marker-end="url(#ak)"/>
+  <text x="290" y="155" class="tm">위에서 보기</text>
+  <line x1="370" y1="105" x2="550" y2="105" class="ax"/>
+  <line x1="460" y1="195" x2="460" y2="15" class="ax"/>
+  <circle cx="460" cy="105" r="25" class="c2"/><circle cx="460" cy="105" r="50" class="c2"/><circle cx="460" cy="105" r="75" class="c2"/>
+  <text x="468" y="98" class="t2">1</text><text x="493" y="80" class="t2">4</text><text x="516" y="57" class="t2">9</text>
+  <text x="400" y="205">등위곡선 x² + y² = k</text>
+</svg>
+<figcaption>등고선이 촘촘할수록 경사가 가파름 (지도 등고선과 같은 원리)</figcaption>
+</figure>
+<div class="box key"><b>정의역 구하기</b> — 식이 “말이 되는” $(x,y)$ 전체
+<ul style="margin:4px 0"><li>루트 안 $\ge0$ &nbsp; · 분모 $\ne0$ &nbsp; · $\ln$ 안 $\gt0$</li></ul>
+예: $f(x,y)=\sqrt{1-x^2-y^2}$ → $x^2+y^2\le1$ (원판). $f=\ln(x-y)$ → $y\lt x$ (직선 아래쪽).</div>
+
+<h3 id="s32">3.2 극한과 연속</h3>
+<p>1변수는 왼쪽/오른쪽 두 방향만 있었지만, 평면에서는 $(a,b)$ 로 다가가는 <b>경로가 무한히 많습니다</b>. 극한이 존재하려면 <b>모든 경로에서 같은 값</b>이 나와야 합니다.</p>
+<div class="box key"><b>극한이 “존재하지 않음”을 보이는 법 (시험 단골)</b>
+두 경로에서 서로 다른 값이 나오면 끝. 보통 쓰는 경로: $x$축($y=0$), $y$축($x=0$), $y=x$, $y=mx$, $y=x^2$ 등.<br>
+<b>“존재함”을 보이는 법</b>: 몇 개 경로만으로는 증명 안 됨. 조임정리(부등식)나 극좌표 $x=r\cos\theta,\ y=r\sin\theta$ 로 바꿔서 $r\to0$.</div>
+<div class="box ex"><b>예제</b>
+(a) $\displaystyle\lim_{(x,y)\to(0,0)}\frac{xy}{x^2+y^2}$ &nbsp; (b) $\displaystyle\lim_{(x,y)\to(0,0)}\frac{x^2y}{x^2+y^2}$
+<details><summary>풀이 보기</summary>
+(a) $y=0$ 경로: $\frac{0}{x^2}=0$. $y=x$ 경로: $\frac{x^2}{2x^2}=\frac12$. 값이 다름 → <b>극한 없음</b>.<br>
+(b) $\frac{x^2}{x^2+y^2}\le1$ 이므로 $\left|\frac{x^2y}{x^2+y^2}\right|\le|y|\to0$. 조임정리 → <b>극한 = 0</b>.
+(극좌표: $\frac{r^3\cos^2\theta\sin\theta}{r^2}=r\cos^2\theta\sin\theta\to0$)
+</details></div>
+<div class="box key"><b>연속</b> — $\lim_{(x,y)\to(a,b)}f(x,y)=f(a,b)$.
+다항식은 어디서나 연속, 유리함수는 분모 ≠ 0 인 곳에서 연속. 연속인 곳에서는 극한 = 그냥 대입.</div>
+
+<h3 id="s33">3.3 편도함수</h3>
+<div class="box key"><b>편미분 = 나머지 변수를 상수 취급하고 미분</b>
+$$f_x=\frac{\partial f}{\partial x}:\ y\text{ 를 상수로 보고 }x\text{ 로 미분},\qquad f_y=\frac{\partial f}{\partial y}:\ x\text{ 를 상수로 보고 }y\text{ 로 미분}$$
+기하적 의미: $f_x(a,b)$ = 곡면을 $y=b$ 로 자른 곡선의 $x$ 방향 기울기.</div>
+<div class="box key"><b>2계 편도함수</b>: $f_{xx},\ f_{yy},\ f_{xy}=(f_x)_y,\ f_{yx}$.<br>
+<b>클레로 정리</b>: 보통(연속이면) $f_{xy}=f_{yx}$ — 순서 상관없음. 검산용으로 좋음.</div>
+<div class="box ex"><b>예제</b> $f(x,y)=x^3y^2+\sin(xy)$ 의 $f_x, f_y, f_{xy}$
+<details><summary>풀이 보기</summary>
+$f_x=3x^2y^2+y\cos(xy)$ ($\sin(xy)$ 를 x로 미분 → 연쇄법칙으로 $y$ 가 앞에 나옴)<br>
+$f_y=2x^3y+x\cos(xy)$<br>
+$f_{xy}=\frac{\partial}{\partial y}f_x=6x^2y+\cos(xy)-xy\sin(xy)$. $f_{yx}$ 도 같은 값 ✓
+</details></div>
+
+<h3 id="s34">3.4 연쇄법칙</h3>
+<figure>
+<svg viewBox="0 0 360 200">
+  <text x="172" y="28" style="font-weight:700;font-size:16px">z</text>
+  <line x1="168" y1="36" x2="95" y2="90" class="c1"/><line x1="182" y1="36" x2="255" y2="90" class="c2"/>
+  <text x="90" y="108" style="font-weight:700;font-size:16px">x</text><text x="255" y="108" style="font-weight:700;font-size:16px">y</text>
+  <line x1="95" y1="116" x2="168" y2="170" class="c1"/><line x1="258" y1="116" x2="182" y2="170" class="c2"/>
+  <text x="172" y="188" style="font-weight:700;font-size:16px">t</text>
+  <text x="80" y="62" class="t1">∂z/∂x</text><text x="232" y="62" class="t2">∂z/∂y</text>
+  <text x="90" y="150" class="t1">dx/dt</text><text x="230" y="150" class="t2">dy/dt</text>
+</svg>
+<figcaption>나무 그림: z 에서 t 까지 가는 <b>모든 길</b>에 대해 (길 위의 미분을 곱하고) 그 결과를 더한다</figcaption>
+</figure>
+<div class="box key"><b>연쇄법칙</b>
+$z=f(x,y)$, $x=x(t),\ y=y(t)$ 이면
+$$\frac{dz}{dt}=\frac{\partial z}{\partial x}\frac{dx}{dt}+\frac{\partial z}{\partial y}\frac{dy}{dt}$$
+$x=x(s,t),\ y=y(s,t)$ 이면
+$$\frac{\partial z}{\partial s}=\frac{\partial z}{\partial x}\frac{\partial x}{\partial s}+\frac{\partial z}{\partial y}\frac{\partial y}{\partial s},\qquad \frac{\partial z}{\partial t}=\frac{\partial z}{\partial x}\frac{\partial x}{\partial t}+\frac{\partial z}{\partial y}\frac{\partial y}{\partial t}$$</div>
+<div class="box key"><b>음함수 미분</b> (연쇄법칙 응용)
+$F(x,y)=0$ 이면 $\dfrac{dy}{dx}=-\dfrac{F_x}{F_y}$. &nbsp; $F(x,y,z)=0$ 이면 $\dfrac{\partial z}{\partial x}=-\dfrac{F_x}{F_z},\ \dfrac{\partial z}{\partial y}=-\dfrac{F_y}{F_z}$. (마이너스 잊지 말 것!)</div>
+<div class="box ex"><b>예제</b>
+(a) $z=x^2y$, $x=\cos t,\ y=\sin t$ 일 때 $\frac{dz}{dt}$ &nbsp; (b) $x^2+y^2+z^2=1$ 에서 $\frac{\partial z}{\partial x}$
+<details><summary>풀이 보기</summary>
+(a) $\frac{dz}{dt}=2xy\cdot(-\sin t)+x^2\cdot\cos t=-2\cos t\sin^2t+\cos^3t$.<br>
+(b) $F=x^2+y^2+z^2-1$: $\frac{\partial z}{\partial x}=-\frac{2x}{2z}=-\frac xz$.
+</details></div>
+
+<h3 id="s35">3.5 방향미분계수와 그래디언트 벡터</h3>
+<p>편미분은 $x$축, $y$축 방향의 기울기만 알려줍니다. <b>아무 방향 $\mathbf u$</b> 로의 기울기가 방향미분계수입니다.</p>
+<div class="box key"><b>그래디언트와 방향미분</b>
+$$\nabla f=\langle f_x,\ f_y\rangle\ (\text{3변수면 }\langle f_x,f_y,f_z\rangle),\qquad D_{\mathbf u}f=\nabla f\cdot\mathbf u$$
+<b>$\mathbf u$ 는 반드시 단위벡터</b>! 방향이 $\langle3,4\rangle$ 로 주어지면 $\mathbf u=\langle\frac35,\frac45\rangle$ 로 바꿔서 사용.<br>
+각도 θ 로 주어지면 $\mathbf u=\langle\cos\theta,\sin\theta\rangle$.</div>
+<div class="box key"><b>그래디언트의 3가지 성질 (진짜 중요)</b>
+<ol style="margin:4px 0">
+<li>$f$ 가 <b>가장 빨리 증가하는 방향 = $\nabla f$</b>, 그 최대 증가율 = $\|\nabla f\|$</li>
+<li>가장 빨리 감소하는 방향 = $-\nabla f$, 그때 변화율 = $-\|\nabla f\|$</li>
+<li>$\nabla f$ 는 <b>등위곡선(등위면)에 수직</b>. 등위곡선의 접선 방향으로는 $D_{\mathbf u}f=0$</li></ol>
+이유: $D_{\mathbf u}f=\|\nabla f\|\cos\theta$ 이고 $\cos\theta$ 는 θ=0 일 때 최대.</div>
+<figure>
+<svg viewBox="0 0 360 220">
+  <ellipse cx="150" cy="115" rx="40" ry="30" class="c2" style="stroke-width:1.6"/>
+  <ellipse cx="150" cy="115" rx="80" ry="60" class="c2" style="stroke-width:1.6"/>
+  <ellipse cx="150" cy="115" rx="120" ry="90" class="c2" style="stroke-width:1.6"/>
+  <text x="182" y="92" class="t2">k=1</text><text x="210" y="62" class="t2">k=2</text><text x="250" y="35" class="t2">k=3</text>
+  <circle cx="206.6" cy="157.4" r="5" class="dotk"/>
+  <line x1="150.6" y1="199.4" x2="262.6" y2="115.4" class="ink dash" style="stroke-width:1"/>
+  <line x1="206.6" y1="157.4" x2="248.6" y2="213.4" class="c1" marker-end="url(#a1)" style="stroke-width:3"/>
+  <line x1="206.6" y1="157.4" x2="300" y2="160" class="cg" marker-end="url(#ag)"/>
+  <text x="256" y="208" class="t1" style="font-weight:700">∇f</text>
+  <text x="304" y="158" class="tg">u</text>
+  <text x="250" y="110" class="tm">접선: D_u f = 0</text>
+</svg>
+<figcaption>등위곡선 위의 점에서 ∇f(파랑)는 곡선에 수직이고, f 가 커지는 바깥쪽(k가 큰 쪽)을 가리킴</figcaption>
+</figure>
+<div class="box ex"><b>예제</b> $f(x,y)=x^2y$, 점 $(1,2)$
+(a) $\langle3,4\rangle$ 방향 방향미분계수 &nbsp; (b) 최대 증가 방향과 최대 증가율
+<details><summary>풀이 보기</summary>
+$\nabla f=\langle2xy,\ x^2\rangle=\langle4,1\rangle$ (점 대입).<br>
+(a) $\mathbf u=\langle\frac35,\frac45\rangle$, $D_{\mathbf u}f=4\cdot\frac35+1\cdot\frac45=\frac{16}5$.<br>
+(b) 방향 $\langle4,1\rangle$, 최대 증가율 $\sqrt{17}$.
+</details></div>
+
+<h3 id="s36">3.6 접평면과 전미분</h3>
+<figure>
+<svg viewBox="0 0 360 200">
+  <path d="M 20 170 C 80 60, 260 40, 340 160" class="c1"/>
+  <path d="M 70 185 C 120 100, 250 90, 300 185" class="c1" style="stroke-width:1.2;opacity:.6"/>
+  <polygon points="70,90 250,60 300,95 120,125" class="f2" style="stroke:var(--acc2);stroke-width:1.4"/>
+  <circle cx="185" cy="92" r="5" class="dotk"/>
+  <line x1="185" y1="92" x2="185" y2="20" class="ink" marker-end="url(#ak)" style="stroke-width:2"/>
+  <text x="192" y="30">법선 ∇F</text>
+  <text x="196" y="108">P₀</text>
+  <text x="256" y="78" class="t2">접평면</text>
+  <text x="300" y="150" class="t1">곡면</text>
+</svg>
+<figcaption>접평면 = 곡면을 한 점에서 확대하면 보이는 평평한 면 (1변수의 접선의 3차원 버전)</figcaption>
+</figure>
+<div class="box key"><b>접평면 공식 두 가지</b>
+<b>① 곡면이 $z=f(x,y)$ 꼴일 때</b> (점 $(x_0,y_0)$, $z_0=f(x_0,y_0)$)
+$$z-z_0=f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)$$
+<b>② 곡면이 $F(x,y,z)=k$ 꼴일 때</b> — 법선 $=\nabla F(x_0,y_0,z_0)$
+$$F_x(x-x_0)+F_y(y-y_0)+F_z(z-z_0)=0$$
+법선직선: $x=x_0+F_xt,\ y=y_0+F_yt,\ z=z_0+F_zt$.</div>
+<div class="box key"><b>선형근사와 전미분</b>
+선형근사: $f(x,y)\approx f(x_0,y_0)+f_x(x_0,y_0)(x-x_0)+f_y(x_0,y_0)(y-y_0)$ (= 접평면으로 근사)<br>
+전미분: $$dz=f_x\,dx+f_y\,dy\qquad(\Delta z\approx dz)$$
+“x가 조금 dx, y가 조금 dy 변하면 z 는 대략 dz 만큼 변한다.” 오차/변화량 추정 문제에 사용.</div>
+<div class="box ex"><b>예제</b>
+(a) $z=x^2+y^2$ 의 $(1,2,5)$ 에서 접평면 &nbsp; (b) 구 $x^2+y^2+z^2=9$ 의 $(2,1,2)$ 에서 접평면 &nbsp; (c) $z=x^2y$ 에서 $(x,y)$ 가 $(2,3)\to(2.01,\,2.98)$ 일 때 $\Delta z$ 근삿값
+<details><summary>풀이 보기</summary>
+(a) $f_x=2x=2,\ f_y=2y=4$ → $z-5=2(x-1)+4(y-2)$, 즉 $z=2x+4y-5$.<br>
+(b) $\nabla F=\langle2x,2y,2z\rangle=\langle4,2,4\rangle$ → $4(x-2)+2(y-1)+4(z-2)=0$, 즉 $2x+y+2z=9$.<br>
+(c) $dz=2xy\,dx+x^2dy=12(0.01)+4(-0.02)=0.04$.
+</details></div>
+
+<h3 id="s37">3.7 이변수 함수의 극대와 극소</h3>
+<figure class="wide">
+<svg viewBox="0 0 600 170">
+  <path d="M 30 40 Q 100 190 170 40" class="c1"/><ellipse cx="100" cy="40" rx="70" ry="11" class="c1" style="stroke-width:1.2"/>
+  <circle cx="100" cy="115" r="4" class="dot2"/><text x="70" y="160" style="font-weight:700">극소 (그릇)</text>
+  <path d="M 230 130 Q 300 -20 370 130" class="c1"/><ellipse cx="300" cy="130" rx="70" ry="11" class="c1" style="stroke-width:1.2"/>
+  <circle cx="300" cy="55" r="4" class="dot2"/><text x="270" y="160" style="font-weight:700">극대 (언덕)</text>
+  <path d="M 440 50 Q 500 140 560 50" class="c1"/>
+  <path d="M 420 110 Q 500 30 580 110" class="c2"/>
+  <circle cx="500" cy="95" r="4" class="dotk"/>
+  <text x="440" y="160" style="font-weight:700">안장점 (말 안장)</text>
+  <text x="455" y="30" class="t1">한 방향: 그릇 모양</text><text x="455" y="135" class="t2">다른 방향: 언덕 모양</text>
+</svg>
+<figcaption>세 경우 모두 그 점에서 $f_x=f_y=0$ (접평면이 수평). 판별식 D 로 구별한다</figcaption>
+</figure>
+<div class="box key"><b>푸는 순서</b>
+<ol style="margin:4px 0">
+<li><b>임계점 찾기</b>: $f_x=0$ 과 $f_y=0$ 을 연립해서 푼다. (편도함수가 존재하지 않는 점도 임계점)</li>
+<li><b>2계 편도함수</b> $f_{xx},f_{yy},f_{xy}$ 계산</li>
+<li>각 임계점에서 <b>판별식</b> $$D=f_{xx}f_{yy}-(f_{xy})^2$$</li></ol>
+<table>
+<tr><th>조건</th><th>결론</th></tr>
+<tr><td>$D\gt0$ 이고 $f_{xx}\gt0$</td><td><b>극소</b> (그릇 모양 ∪)</td></tr>
+<tr><td>$D\gt0$ 이고 $f_{xx}\lt0$</td><td><b>극대</b> (언덕 모양 ∩)</td></tr>
+<tr><td>$D\lt0$</td><td><b>안장점</b> (극값 아님)</td></tr>
+<tr><td>$D=0$</td><td>판정 불가</td></tr>
+</table></div>
+<div class="box warn"><b>함정</b>
+① 연립방정식 풀 때 해를 빠뜨리지 말 것 (예: $x(x-1)=0$ → $x=0$ <b>와</b> $x=1$).<br>
+② $D\lt0$ 이면 $f_{xx}$ 볼 필요 없이 안장점.<br>
+③ 극값을 물으면 점 좌표뿐 아니라 함숫값 $f(a,b)$ 까지 써야 함.</div>
+<div class="box key"><b>(참고) 닫힌 유계 영역에서 최댓값 · 최솟값</b>
+① 내부 임계점의 함숫값 ② 경계(변) 위에서의 최대·최소 (경계 식을 대입해 1변수 문제로) ③ 꼭짓점 — 이 후보들 중 가장 큰 값/작은 값.</div>
+<div class="box ex"><b>예제</b> $f(x,y)=x^3-3xy+y^3$ 의 극값을 구하라.
+<details><summary>풀이 보기</summary>
+$f_x=3x^2-3y=0\Rightarrow y=x^2$, &nbsp; $f_y=-3x+3y^2=0\Rightarrow x=y^2$.<br>
+대입: $x=x^4\Rightarrow x(x^3-1)=0\Rightarrow x=0,1$. 임계점 $(0,0),(1,1)$.<br>
+$f_{xx}=6x,\ f_{yy}=6y,\ f_{xy}=-3$, &nbsp; $D=36xy-9$.<br>
+$(0,0)$: $D=-9\lt0$ → <b>안장점</b>.<br>
+$(1,1)$: $D=27\gt0$, $f_{xx}=6\gt0$ → <b>극소</b>, 극솟값 $f(1,1)=1-3+1=-1$.
+</details></div>
+
+<!-- ====================================================== -->
+<h2 id="tutor">튜터링 사전진단평가 풀이 (벡터 파트)</h2>
+<p class="sub">넣어준 진단평가 10문제. 시험 스타일 감 잡기용 — 먼저 풀어보고 열어보기.</p>
+
+<div class="box ex"><b>1.</b> 시점 $(-2,3,1)$, 종점 $(0,-4,4)$ 인 벡터의 단위벡터
+<details><summary>풀이 보기</summary>
+$\mathbf v=\text{종점}-\text{시점}=\langle2,-7,3\rangle$, $\|\mathbf v\|=\sqrt{4+49+9}=\sqrt{62}$ → $\dfrac{1}{\sqrt{62}}\langle2,-7,3\rangle$.
+</details></div>
+<div class="box ex"><b>2.</b> 시점이 $P(-2,3,5)$ 인 벡터 $\mathbf v=7\mathbf i-\mathbf j+3\mathbf k$ 의 종점
+<details><summary>풀이 보기</summary>
+종점 = 시점 + 벡터 = $(-2+7,\ 3-1,\ 5+3)=(5,2,8)$.
+</details></div>
+<div class="box ex"><b>3.</b> $\mathbf v$ 는 $yz$ 평면 위, 크기 2, 양의 $y$축과 30°. 성분 표현은?
+<details><summary>풀이 보기</summary>
+$yz$ 평면이니 $x$ 성분 = 0. $y$ 성분 $=2\cos30°=\sqrt3$, $z$ 성분 $=2\sin30°=1$ → $\mathbf v=\langle0,\sqrt3,1\rangle$ ($z$ 가 음수 쪽이면 $\langle0,\sqrt3,-1\rangle$ 도 가능).
+</details></div>
+<div class="box ex"><b>4.</b> $P(4,3,0)$ 에서 $Q(1,-3,3)$ 로 가는 선분의 $\frac23$ 지점
+<details><summary>풀이 보기</summary>
+$P+\frac23(Q-P)=(4,3,0)+\frac23\langle-3,-6,3\rangle=(2,-1,2)$.
+</details></div>
+<div class="box ex"><b>5.</b> $A(0,-1,1)$ 까지 거리가 $B(1,2,0)$ 까지 거리의 2배인 점들의 집합
+<details><summary>풀이 보기</summary>
+$|PA|^2=4|PB|^2$: $x^2+(y+1)^2+(z-1)^2=4[(x-1)^2+(y-2)^2+z^2]$<br>
+정리: $3x^2+3y^2+3z^2-8x-18y+2z+18=0$ → ÷3 후 완전제곱:<br>
+$\left(x-\frac43\right)^2+(y-3)^2+\left(z+\frac13\right)^2=\frac{44}9$<br>
+→ 중심 $\left(\frac43,3,-\frac13\right)$, 반지름 $\frac{2\sqrt{11}}3$ 인 <b>구</b>.
+</details></div>
+<div class="box ex"><b>6.</b> $\mathbf u=-4\mathbf i+2\mathbf k$, $\mathbf v=2\mathbf i-\mathbf k$ 사이의 각
+<details><summary>풀이 보기</summary>
+$\mathbf u\cdot\mathbf v=-8+0-2=-10$, $\|\mathbf u\|=\sqrt{20}$, $\|\mathbf v\|=\sqrt5$, $\cos\theta=\frac{-10}{\sqrt{100}}=-1$ → $\theta=\pi$ (180°). 사실 $\mathbf u=-2\mathbf v$ 라서 정반대 방향.
+</details></div>
+<div class="box ex"><b>7.</b> $\mathbf u=3\mathbf i-5\mathbf j+2\mathbf k$, $\mathbf v=7\mathbf i+\mathbf j-2\mathbf k$: $\mathbf v$ 위로의 사영벡터
+<details><summary>풀이 보기</summary>
+$\mathbf u\cdot\mathbf v=21-5-4=12$, $\|\mathbf v\|^2=49+1+4=54$.
+$\text{proj}_{\mathbf v}\mathbf u=\frac{12}{54}\langle7,1,-2\rangle=\left\langle\frac{14}9,\frac29,-\frac49\right\rangle$.
+</details></div>
+<div class="box ex"><b>8.</b> 같은 $\mathbf u,\mathbf v$: $\mathbf v$ 에 수직인 성분벡터
+<details><summary>풀이 보기</summary>
+$\mathbf u-\text{proj}_{\mathbf v}\mathbf u=\left\langle3-\frac{14}9,\,-5-\frac29,\,2+\frac49\right\rangle=\left\langle\frac{13}9,-\frac{47}9,\frac{22}9\right\rangle$.
+검산: $\cdot\mathbf v=\frac{91-47-44}{9}=0$ ✓
+</details></div>
+<div class="box ex"><b>9.</b> 정육면체의 대각선과 한 변 사이의 각
+<details><summary>풀이 보기</summary>
+한 변 1인 정육면체: 대각선 $\langle1,1,1\rangle$, 변 $\langle1,0,0\rangle$. $\cos\theta=\frac{1}{\sqrt3\cdot1}$ → $\theta=\cos^{-1}\frac1{\sqrt3}\approx54.7°$.
+</details></div>
+<div class="box ex"><b>10.</b> 세 꼭짓점 $(1,2,0),(0,0,0),(-2,1,0)$ 인 삼각형은 예각/직각/둔각?
+<details><summary>풀이 보기</summary>
+원점 꼭짓점에서 두 변 $\langle1,2,0\rangle$, $\langle-2,1,0\rangle$ 의 내적 $=-2+2=0$ → <b>직각삼각형</b>.
+(각 꼭짓점에서 두 변 벡터의 내적 부호를 확인: 0이면 직각, 음수면 둔각.)
+</details></div>
+
+<!-- ====================================================== -->
+<h2 id="cheat">시험 직전 한 장 요약</h2>
+<table>
+<tr><th>주제</th><th>꼭 외울 것</th></tr>
+<tr><td>기하급수</td><td>$\sum ar^k=\frac{a}{1-r}$, $|r|\lt1$ 일 때만</td></tr>
+<tr><td>발산판정</td><td>$a_k\not\to0$ ⇒ 발산 (역은 거짓)</td></tr>
+<tr><td>p급수</td><td>$\sum1/k^p$: $p\gt1$ 수렴, $p\le1$ 발산</td></tr>
+<tr><td>적분판정</td><td>양수·연속·감소 → $\sum f(k)$ 와 $\int_1^\infty f$ 같은 운명</td></tr>
+<tr><td>극한비교</td><td>$\lim a_k/b_k=$ 양의 유한값 → 같은 운명. $b_k$=최고차항</td></tr>
+<tr><td>교대급수</td><td>$a_k$ 감소 &amp; $a_k\to0$ ⇒ 수렴. 오차 ≤ $a_{n+1}$</td></tr>
+<tr><td>절대/조건</td><td>$\sum|a_k|$ 수렴 ⇒ 절대수렴. 아니지만 수렴 ⇒ 조건수렴</td></tr>
+<tr><td>비·근판정</td><td>$\rho\lt1$ 절대수렴, $\rho\gt1$ 발산, $\rho=1$ 모름</td></tr>
+<tr><td>멱급수</td><td>비판정 → $R$ → <b>끝점 따로 대입</b></td></tr>
+<tr><td>미분·적분</td><td>$\frac1{1-x}=\sum x^k$ 에서 대입/미분/적분. $R$ 불변</td></tr>
+<tr><td>벡터</td><td>$\overrightarrow{PQ}=Q-P$, 단위벡터 $\mathbf v/\|\mathbf v\|$</td></tr>
+<tr><td>내적</td><td>$\mathbf u\cdot\mathbf v=\|\mathbf u\|\|\mathbf v\|\cos\theta$, 수직 ⇔ 0, 사영 $\frac{\mathbf u\cdot\mathbf v}{\|\mathbf v\|^2}\mathbf v$</td></tr>
+<tr><td>외적</td><td>행렬식(가운데 −), 둘 다에 수직, 크기 = 평행사변형 넓이</td></tr>
+<tr><td>삼중적</td><td>$|\mathbf u\cdot(\mathbf v\times\mathbf w)|$ = 부피, 0이면 공면</td></tr>
+<tr><td>직선</td><td>$\mathbf r_0+t\mathbf v$</td></tr>
+<tr><td>평면</td><td>$\mathbf n\cdot(P-P_0)=0$, 세 점 → $\mathbf n=\overrightarrow{PQ}\times\overrightarrow{PR}$</td></tr>
+<tr><td>점-평면 거리</td><td>$\frac{|ax_0+by_0+cz_0-d|}{\sqrt{a^2+b^2+c^2}}$</td></tr>
+<tr><td>극한</td><td>두 경로에서 값 다르면 극한 없음</td></tr>
+<tr><td>편미분</td><td>다른 변수는 상수. $f_{xy}=f_{yx}$</td></tr>
+<tr><td>연쇄법칙</td><td>나무 그림: 길마다 곱하고, 길끼리 더하기</td></tr>
+<tr><td>방향미분</td><td>$D_{\mathbf u}f=\nabla f\cdot\mathbf u$ (<b>u 단위벡터!</b>), 최대 $\|\nabla f\|$</td></tr>
+<tr><td>접평면</td><td>$z-z_0=f_x(x-x_0)+f_y(y-y_0)$ / $\nabla F\cdot\langle x-x_0,\dots\rangle=0$</td></tr>
+<tr><td>전미분</td><td>$dz=f_xdx+f_ydy$</td></tr>
+<tr><td>극값</td><td>$f_x=f_y=0$, $D=f_{xx}f_{yy}-f_{xy}^2$: D&gt;0 &amp; $f_{xx}$&gt;0 극소, &lt;0 극대, D&lt;0 안장</td></tr>
+</table>
+<p class="sub" style="margin-top:30px">시험 잘 보세요!</p>
+</main>
+</div>
+</body>
+</html>
